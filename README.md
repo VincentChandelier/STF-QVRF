@@ -1,8 +1,7 @@
 # STF-QVRF
 
 # The Devil Is in the Details: Window-based Attention for Image Compression + QVRF: A Quantization-error-aware Variable Rate Framework for Learned Image Compression
-Pytorch implementation of the paper "The Devil Is in the Details: Window-based Attention for Image Compression". CVPR2022.
-+ “QVRF: A Quantization-error-aware Variable Rate Framework for Learned Image Compression”
+Pytorch implementation of the paper "The Devil Is in the Details: Window-based Attention for Image Compression" + “QVRF: A Quantization-error-aware Variable Rate Framework for Learned Image Compression”
 
 We make the STF into variable rate model
 This repository is based on [STF](https://github.com/Googolxx/STF). We kept network scripts, and removed other components. The major changes are provided in `stf.py`. For the official code release, see the [STF](https://github.com/Googolxx/STF/blob/main/compressai/models/stf.py).
