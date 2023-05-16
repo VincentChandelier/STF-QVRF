@@ -407,23 +407,22 @@ def main(argv):
     for epoch in range(last_epoch, args.epochs):
         print("noise quant: {}, ste quant:{}, stage:{}".format(noise, ste, stage))
         print(f"Learning rate: {optimizer.param_groups[0]['lr']}")
-        # train_one_epoch(
-        #     net,
-        #     criterion,
-        #     train_dataloader,
-        #     optimizer,
-        #     aux_optimizer,
-        #     epoch,
-        #     args.clip_max_norm,
-		# 	noise,
-        #     stage,
-        # )
-        # loss = test_epoch(epoch, test_dataloader, net, criterion, noise, stage, )
-        # lr_scheduler.step(loss)
-        #
-        # is_best = loss < best_loss
-        # best_loss = min(loss, best_loss)
-        is_best = 0
+        train_one_epoch(
+            net,
+            criterion,
+            train_dataloader,
+            optimizer,
+            aux_optimizer,
+            epoch,
+            args.clip_max_norm,
+			noise,
+            stage,
+        )
+        loss = test_epoch(epoch, test_dataloader, net, criterion, noise, stage, )
+        lr_scheduler.step(loss)
+
+        is_best = loss < best_loss
+        best_loss = min(loss, best_loss)
         if args.save:
             save_checkpoint(
                 {
