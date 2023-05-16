@@ -362,7 +362,7 @@ def main(argv):
 
 
     optimizer, aux_optimizer = configure_optimizers(net, args)
-    lr_scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, "min", factor=0.5, patience=20)
+    lr_scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, "min", factor=0.1, patience=10)
     criterion = RateDistortionLoss()
 
     last_epoch = 0
@@ -384,8 +384,6 @@ def main(argv):
         else:
             print("Loading: ", args.checkpoint)
             checkpoint = torch.load(args.checkpoint, map_location=device)
-            last_epoch = checkpoint["epoch"] + 1
-            best_loss = checkpoint["best_loss"]
             net.load_state_dict(checkpoint["state_dict"])
             optimizer.load_state_dict(checkpoint["optimizer"])
             aux_optimizer.load_state_dict(checkpoint["aux_optimizer"])
@@ -405,33 +403,32 @@ def main(argv):
     if args.ste or stage>2:
         ste = True
         noise = False
-    
+
     for epoch in range(last_epoch, args.epochs):
         print("noise quant: {}, ste quant:{}, stage:{}".format(noise, ste, stage))
         print(f"Learning rate: {optimizer.param_groups[0]['lr']}")
-        train_one_epoch(
-            net,
-            criterion,
-            train_dataloader,
-            optimizer,
-            aux_optimizer,
-            epoch,
-            args.clip_max_norm,
-			noise,
-            stage,
-        )
-        loss = test_epoch(epoch, test_dataloader, net, criterion, noise, stage, )
-        lr_scheduler.step(loss)
-
-        is_best = loss < best_loss
-        best_loss = min(loss, best_loss)
-
+        # train_one_epoch(
+        #     net,
+        #     criterion,
+        #     train_dataloader,
+        #     optimizer,
+        #     aux_optimizer,
+        #     epoch,
+        #     args.clip_max_norm,
+		# 	noise,
+        #     stage,
+        # )
+        # loss = test_epoch(epoch, test_dataloader, net, criterion, noise, stage, )
+        # lr_scheduler.step(loss)
+        #
+        # is_best = loss < best_loss
+        # best_loss = min(loss, best_loss)
+        is_best = 0
         if args.save:
             save_checkpoint(
                 {
                     "epoch": epoch,
                     "state_dict": net.state_dict(),
-                    "loss": loss,
 					"best_loss": best_loss,
                     "optimizer": optimizer.state_dict(),
                     "aux_optimizer": aux_optimizer.state_dict(),
