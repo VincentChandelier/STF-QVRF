@@ -34,11 +34,8 @@ pip install timm
 ### Training
 Load the [fixed-rate model](https://drive.google.com/file/d/1cH5cR-0VdsQqCchyN3DO62Sx0WGjv1h8/view?usp=share_link) from [STF](https://github.com/Googolxx/STF) as the pretrained model and finetune into a variable-rate model.
 The trained set is same to [QRAF](https://github.com/VincentChandelier/QRAF)
-
-
-stage 3
 ```
-python3 train.py  -d ./dataset  -e 500 -lr 1e-6 -n 8 --batch-size 8 --test-batch-size 64 --aux-learning-rate 1e-3 --patch-size 256 256 --cuda --save --seed 1926 --clip_max_norm 1.0  --stage 3 --ste 1 --refresh 1 --loadFromPretrainedSinglemodel 0 --checkpoint stf_0483.pth.tar
+python3 train.py  -d ./dataset  -e 500 -lr 1e-5 -n 8 --batch-size 8 --test-batch-size 64 --aux-learning-rate 1e-4 --patch-size 256 256 --cuda --save --seed 1926 --clip_max_norm 1.0  --stage 3 --ste 1 --refresh 1 --loadFromPretrainedSinglemodel 1 --checkpoint stf_0483.pth.tar
 ```
 ### Fixed the entropy model
 ```
