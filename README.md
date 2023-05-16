@@ -21,8 +21,6 @@ This repo defines Transformer-based models in varibale rate model for learned im
 | Variable-rate mode|0.0018, 0.0035, 0.0067, 0.0130, 0.025, 0.0483, 0.0932, 0.18, 0.36, 0.72, 1.44    |  [stf_0483](https://drive.google.com/file/d/1cH5cR-0VdsQqCchyN3DO62Sx0WGjv1h8/view?usp=share_link)  |
 
 ## Installation
-
-
 ```bash
 conda create -n compress python=3.7
 conda activate compress
@@ -30,11 +28,14 @@ pip install compressai=1.1.5
 pip install pybind11
 pip install timm
 ```
+
 ## Usage
+
 ### Training
 Load the [fixed-rate model](https://drive.google.com/file/d/1cH5cR-0VdsQqCchyN3DO62Sx0WGjv1h8/view?usp=share_link) from [STF](https://github.com/Googolxx/STF) as the pretrained model and finetune into a variable-rate model.
-The trained set is same to [QRAF](https://github.com/VincentChandelier/QRAF）
-```
+The trained set is same to [QRAF](https://github.com/VincentChandelier/QRAF)
+
+
 stage 3
 ```
 python3 train.py  -d ./dataset  -e 500 -lr 1e-6 -n 8 --batch-size 8 --test-batch-size 64 --aux-learning-rate 1e-3 --patch-size 256 256 --cuda --save --seed 1926 --clip_max_norm 1.0  --stage 3 --ste 1 --refresh 1 --loadFromPretrainedSinglemodel 0 --checkpoint stf_0483.pth.tar
@@ -43,7 +44,7 @@ python3 train.py  -d ./dataset  -e 500 -lr 1e-6 -n 8 --batch-size 8 --test-batch
 ```
 python3 update.py checkpoint.pth.tar  -n STFVR
 ```
-###Inference
+### Inference
 For  discrete bitrate results at a assign Index: Index belongs in {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 ```
     python3 Inference.py --dataset ./dataset/Kodak --s 11 --output_path AttentionVRSTE -p ./STFVR.pth.tar --patch 64 --factormode 0 --factor 0
@@ -62,7 +63,8 @@ For example continuous bitrate  results:
   booktitle={CVPR},
   year={2022}
 }
-
+```
+```
 @article{tong2023qvrf,
   title={QVRF: A Quantization-error-aware Variable Rate Framework for Learned Image Compression},
   author={Tong, Kedeng and Wu, Yaojun and Li, Yue and Zhang, Kai and Zhang, Li and Jin, Xin},
