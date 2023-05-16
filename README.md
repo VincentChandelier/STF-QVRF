@@ -15,10 +15,10 @@ This repo defines Transformer-based models in varibale rate model for learned im
  * QVRF：https://github.com/bytedance/QRAF
 
 # Available data
- Data | Lambda |  Link                                                                                              |
-| ----|---------------------------------------------------------------------------------------------------|
-| Fixed-rate model | 0.0483	| [stf_0483](https://drive.google.com/file/d/1cH5cR-0VdsQqCchyN3DO62Sx0WGjv1h8/view?usp=share_link) |
-| Variable-rate mode|   |  |
+| Method | Lambda | Link                                                                                              |
+| ---- |--------|---------------------------------------------------------------------------------------------------|
+| Fixed-rate model | 0.0483 | [stf_0483](https://drive.google.com/file/d/1cH5cR-0VdsQqCchyN3DO62Sx0WGjv1h8/view?usp=share_link)    |
+| Variable-rate mode|0.0018, 0.0035, 0.0067, 0.0130, 0.025, 0.0483, 0.0932, 0.18, 0.36, 0.72, 1.44    |  [stf_0483](https://drive.google.com/file/d/1cH5cR-0VdsQqCchyN3DO62Sx0WGjv1h8/view?usp=share_link)  |
 
 ## Installation
 
@@ -44,16 +44,15 @@ python3 train.py  -d ./dataset  -e 500 -lr 1e-6 -n 8 --batch-size 8 --test-batch
 python3 update.py checkpoint.pth.tar  -n STFVR
 ```
 ###Inference
-For  discrete bitrate results at a assign Index: Index belongs in {0, 1, 2, 3, 4, 5, 6, 7}
+For  discrete bitrate results at a assign Index: Index belongs in {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 ```
-    python3 Inference.py --dataset ./dataset/Kodak --s Index --output_path AttentionVRSTE -p ./STFVR.pth.tar --patch 64 --factormode 0 --factor 0
+    python3 Inference.py --dataset ./dataset/Kodak --s 11 --output_path AttentionVRSTE -p ./STFVR.pth.tar --patch 64 --factormode 0 --factor 0
 ```
 ### Continuous bitrate results
 For example continuous bitrate  results:
 ```
     python3 Inference.py --dataset ./dataset/Kodak --s 2 --output_path AttentionVRSTE -p ./STFVR.pth.tar --patch 64 --factormode 1 --factor 0.1
 ```
-
 
 ## Citation
 ```
