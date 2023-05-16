@@ -52,7 +52,7 @@ For  discrete bitrate results at a assign Index: Index belongs in {0, 1, 2, 3, 4
 ### Continuous bitrate results
 For example continuous bitrate  results:
 ```
-    python3 Inference.py --dataset ./dataset/Kodak --s 2 --output_path AttentionVRSTE -p ./STFVR.pth.tar --patch 64 --factormode 1 --factor 0.1
+    python3 Inference.py --dataset ./dataset/Kodak --s 2 --output_path STFVR -p ./STFVR.pth.tar --patch 64 --factormode 1 --factor 0.1
 ```
 
 ## Citation
