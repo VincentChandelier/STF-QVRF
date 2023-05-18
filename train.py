@@ -391,7 +391,7 @@ def main(argv):
     if args.refresh:
         optimizer.param_groups[0]['lr'] = args.learning_rate
         aux_optimizer.param_groups[0]['lr'] = args.aux_learning_rate
-        lr_scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, "min", factor=0.5, patience=20)
+        lr_scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, "min", factor=0.1, patience=10)
         last_epoch = 0
 
     if args.cuda and torch.cuda.device_count() > 1:

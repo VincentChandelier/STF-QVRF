@@ -549,9 +549,9 @@ class SymmetricalTransFormer(CompressionModel):
         self.gaussian_conditional = GaussianConditional(None)
         self._freeze_stages()
 
-        self.lmbda = [0.0018, 0.0035, 0.0067, 0.0130, 0.025, 0.0483, 0.0932, 0.18]
+        self.lmbda = [0.0018, 0.0035, 0.0067, 0.0130, 0.025, 0.0483, 0.0932, 0.18, 0.36, 0.72, 1.44]
         self.Gain = torch.nn.Parameter(torch.tensor(
-            [1.0000, 1.3944, 1.9293, 2.6874, 3.7268, 5.1801, 7.1957, 10.0000]), requires_grad=True)
+            [1.0000,  1.3944,  1.9293,  2.6874,  3.7268,  5.1801,  7.1957, 10.0000, 14.1421, 20.0000, 28.2843]), requires_grad=True)
         self.levels = len(self.lmbda)  # 8
 
 
@@ -613,10 +613,13 @@ class SymmetricalTransFormer(CompressionModel):
         y_shape = y.shape[2:]
 
         z = self.h_a(y)
-        _, z_likelihoods = self.entropy_bottleneck(z)
-        z_offset = self.entropy_bottleneck._get_medians()
-        z_tmp = z - z_offset
-        z_hat = ste_round(z_tmp) + z_offset
+        if noise:
+            z_hat, z_likelihoods = self.entropy_bottleneck(z)
+        else:
+            _, z_likelihoods = self.entropy_bottleneck(z)
+            z_offset = self.entropy_bottleneck._get_medians()
+            z_tmp = z - z_offset
+            z_hat = ste_round(z_tmp) + z_offset
 
         latent_scales = self.h_scale_s(z_hat)
         latent_means = self.h_mean_s(z_hat)
@@ -635,10 +638,19 @@ class SymmetricalTransFormer(CompressionModel):
             scale = self.cc_scale_transforms[slice_index](scale_support)
             scale = scale[:, :, :y_shape[0], :y_shape[1]]
 
-            _, y_slice_likelihood = self.gaussian_conditional(y_slice*QuantizationRegulator, scale*QuantizationRegulator, mu*QuantizationRegulator)
+            if noise:
+                _, y_slice_likelihood = self.gaussian_conditional(y_slice * QuantizationRegulator,
+                                                                  scale * QuantizationRegulator,
+                                                                  mu * QuantizationRegulator)
 
-            y_likelihood.append(y_slice_likelihood)
-            y_hat_slice = ste_round((y_slice - mu)*scale)*ReQuantizationRegulator + mu
+                y_likelihood.append(y_slice_likelihood)
+                y_hat_slice = self.gaussian_conditional.quantize(y_slice * QuantizationRegulator,
+                                                           "noise" if self.training else "dequantize") * ReQuantizationRegulator
+            else:
+                _, y_slice_likelihood = self.gaussian_conditional(y_slice*QuantizationRegulator, scale*QuantizationRegulator, mu*QuantizationRegulator)
+
+                y_likelihood.append(y_slice_likelihood)
+                y_hat_slice = ste_round((y_slice - mu)*QuantizationRegulator)*ReQuantizationRegulator + mu
 
             lrp_support = torch.cat([mean_support, y_hat_slice], dim=1)
             lrp = self.lrp_transforms[slice_index](lrp_support)
@@ -764,11 +776,11 @@ class SymmetricalTransFormer(CompressionModel):
             assert s in range(0, self.levels), f"s should in range(0, {self.levels}), but get s:{s}"
             QuantizationRegulator = torch.abs(self.Gain[s])
 
-        ReQuantizationRegulator = torch.tensor(1.0) / QuantizationRegulator
-
         z_hat = self.entropy_bottleneck.decompress(strings[1], shape)
         latent_scales = self.h_scale_s(z_hat)
         latent_means = self.h_mean_s(z_hat)
+
+        ReQuantizationRegulator = (torch.tensor(1.0) / QuantizationRegulator).to(z_hat.device)
 
         y_shape = [z_hat.shape[2] * 4, z_hat.shape[3] * 4]
         Wh, Ww = y_shape
@@ -797,7 +809,7 @@ class SymmetricalTransFormer(CompressionModel):
             index = self.gaussian_conditional.build_indexes(scale)
 
             rv = decoder.decode_stream(index.reshape(-1).tolist(), cdf, cdf_lengths, offsets)
-            rv = torch.Tensor(rv).reshape(1, -1, y_shape[0], y_shape[1])
+            rv = torch.Tensor(rv).reshape(1, -1, y_shape[0], y_shape[1]).to(z_hat.device)
             y_hat_slice = self.gaussian_conditional.dequantize(rv*ReQuantizationRegulator, mu)
 
 
