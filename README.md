@@ -44,7 +44,7 @@ python3 update.py checkpoint.pth.tar  -n STFVR
 ### Inference
 For  discrete bitrate results at a assign Index: Index belongs in {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 ```
-python3 Inference.py --dataset ./dataset/Kodak --s 11 --output_path AttentionVRSTE -p ./STFVR.pth.tar --patch 64 --factormode 0 --factor 0
+python3 Inference.py --dataset ./dataset/Kodak --s 11 --output_path STFVR -p ./STFVR.pth.tar --patch 64 --factormode 0 --factor 0 --cuda
 ```
 ### Continuous bitrate results
 For example continuous bitrate  results:
