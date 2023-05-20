@@ -116,7 +116,7 @@ def collect_images(rootpath: str) -> List[str]:
     ]
 
 def psnr(a: torch.Tensor, b: torch.Tensor) -> float:
-    mse = torch.nn.functional.mse_loss(a, b).item()
+    mse = F.mse_loss(a, b).item()
     return -10 * math.log10(mse)
 
 def read_image(filepath: str) -> torch.Tensor:
@@ -131,20 +131,23 @@ def inference(model, x, f, outputpath, patch, s, factor, factormode):
     imgpath[-2] = outputpath
     imgPath = '/'.join(imgpath)
     csvfile = '/'.join(imgpath[:-1]) + '/'+outputpath+'_result.csv'
-    print('decoding img: {}'.format(f))
+    # print('decoding img: {}'.format(f))
     h, w = x.size(2), x.size(3)
-    p = patch  # maximum 6 strides of 2
+    p = 64  # maximum 6 strides of 2
     new_h = (h + p - 1) // p * p
     new_w = (w + p - 1) // p * p
-    padding_left = 0
+    padding_left = (new_w - w) // 2
     padding_right = new_w - w - padding_left
-    padding_top = 0
+    padding_top = (new_h - h) // 2
     padding_bottom = new_h - h - padding_top
-    pad = nn.ConstantPad2d((padding_left, padding_right, padding_top, padding_bottom), 0)
-    x_padded = pad(x)
+    x_padded = F.pad(
+        x,
+        (padding_left, padding_right, padding_top, padding_bottom),
+        mode="constant",
+        value=0,
+    )
 
-    _, _, height, width = x_padded.size()
-   
+
     start = time.time()
     out_enc = model.compress(x_padded, s, factor)
     enc_time = time.time() - start
@@ -153,8 +156,7 @@ def inference(model, x, f, outputpath, patch, s, factor, factormode):
     out_dec = model.decompress(out_enc["strings"], out_enc["shape"], s, factor)
     dec_time = time.time() - start
 
-    
-    out_dec["x_hat"] = torch.nn.functional.pad(
+    out_dec["x_hat"] = F.pad(
         out_dec["x_hat"], (-padding_left, -padding_right, -padding_top, -padding_bottom)
     )
 
@@ -172,9 +174,10 @@ def inference(model, x, f, outputpath, patch, s, factor, factormode):
                ms_ssim(x, out_dec["x_hat"], data_range=1.0).item(), enc_time, dec_time]
         write = csv.writer(f)
         write.writerow(row)
-    print('bpp:{}, PSNR: {}, encoding time: {}, decoding time: {}'.format(bpp, PSNR, enc_time, dec_time))
+    # print('bpp:{}, PSNR: {}, encoding time: {}, decoding time: {}'.format(bpp, PSNR, enc_time, dec_time))
     return {
         "psnr": PSNR,
+        "ms-ssim":ms_ssim(x, out_dec["x_hat"], data_range=1.0).item(),
         "bpp": bpp,
         "encoding_time": enc_time,
         "decoding_time": dec_time,
@@ -187,7 +190,7 @@ def inference_entropy_estimation(model, x, f, outputpath, patch, s):
     imgpath[-2] = outputpath
     imgPath = '/'.join(imgpath)
     csvfile = '/'.join(imgpath[:-1]) + '/'+outputpath+'_result.csv'
-    print('decoding img: {}'.format(f))
+    # print('decoding img: {}'.format(f))
     h, w = x.size(2), x.size(3)
     p = patch  # maximum 6 strides of 2
     new_h = (h + p - 1) // p * p

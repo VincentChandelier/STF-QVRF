@@ -549,9 +549,14 @@ class SymmetricalTransFormer(CompressionModel):
         self.gaussian_conditional = GaussianConditional(None)
         self._freeze_stages()
 
-        self.lmbda = [0.0018, 0.0035, 0.0067, 0.0130, 0.025, 0.0483, 0.0932, 0.18, 0.36, 0.72, 1.44]
+        # self.lmbda = [0.0018, 0.0035, 0.0067, 0.0130, 0.025, 0.0483, 0.0932, 0.18, 0.36, 0.72, 1.44]
+        # self.Gain = torch.nn.Parameter(torch.tensor(
+        #     [1.0000,  1.3944,  1.9293,  2.6874,  3.7268,  5.1801,  7.1957, 10.0000, 14.1421, 20.0000, 28.2843]), requires_grad=True)  # initial with torch.tensor([torch.sqrt(i/self.lmbda[0]) for i in self.lmbda])
+
+        self.lmbda = [0.0018, 0.0035, 0.0067, 0.0130, 0.025, 0.0483, 0.0932, 0.18]
         self.Gain = torch.nn.Parameter(torch.tensor(
-            [1.0000,  1.3944,  1.9293,  2.6874,  3.7268,  5.1801,  7.1957, 10.0000, 14.1421, 20.0000, 28.2843]), requires_grad=True)
+            [1.0000,  1.3944,  1.9293,  2.6874,  3.7268,  5.1801,  7.1957, 10.0000]), requires_grad=True)  # initial with torch.tensor([torch.sqrt(i/self.lmbda[0]) for i in self.lmbda])
+
         self.levels = len(self.lmbda)  # 8
 
 
@@ -588,10 +593,10 @@ class SymmetricalTransFormer(CompressionModel):
 
     def forward(self, x, noise=False, stage=3, s=1):
         if stage > 1:
-            if s != 0:
+            if s != 5:
                 QuantizationRegulator = torch.max(self.Gain[s], torch.tensor(1e-4)) + eps
             else:
-                s = 0
+                s = 5
                 QuantizationRegulator = self.Gain[s].detach()
         else:
             QuantizationRegulator = self.Gain[0].detach()

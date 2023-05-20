@@ -70,7 +70,7 @@ from torchvision import transforms
 
 from compressai.datasets import ImageFolder
 from stf import SymmetricalTransFormer
-
+import time
 
 class RateDistortionLoss(nn.Module):
     """Custom rate distortion loss with a Lagrangian parameter."""
@@ -159,7 +159,10 @@ def train_one_epoch(
 ):
     model.train()
     device = next(model.parameters()).device
-
+    train_loss = AverageMeter()
+    train_bpp_loss = AverageMeter()
+    train_mse_loss = AverageMeter()
+    start = time.time()
     for i, d in enumerate(train_dataloader):
         d = d.to(device)
         if stage > 1:
@@ -173,6 +176,9 @@ def train_one_epoch(
         out_net = model(d, noise, stage, s)
 
         out_criterion = criterion(out_net, d, model.lmbda[s])
+        train_bpp_loss.update(out_criterion["bpp_loss"].item())
+        train_loss.update(out_criterion["loss"].item())
+        train_mse_loss.update(out_criterion["mse_loss"].item())
         out_criterion["loss"].backward()
         if clip_max_norm > 0:
             torch.nn.utils.clip_grad_norm_(model.parameters(), clip_max_norm)
@@ -193,6 +199,12 @@ def train_one_epoch(
                 f'\tBpp loss: {out_criterion["bpp_loss"].item():.2f} |'
                 f"\tAux loss: {aux_loss.item():.2f}"
             )
+    print(f"Train epoch {epoch}: Average losses:"
+          f"\tLoss: {train_loss.avg:.3f} |"
+          f"\tMSE loss: {train_mse_loss.avg:.3f} |"
+          f"\tBpp loss: {train_bpp_loss.avg:.4f} |"
+          f"\tTime (s) : {time.time() - start:.4f} |"
+          )
 
 
 def test_epoch(epoch, test_dataloader, model, criterion, noise, stage):
@@ -322,7 +334,7 @@ def parse_args(argv):
 def main(argv):
     args = parse_args(argv)
     import os
-    os.environ['CUDA_VISIBLE_DEVICES'] = '1'
+    os.environ['CUDA_VISIBLE_DEVICES'] = '2'
     if args.seed is not None:
         torch.manual_seed(args.seed)
         random.seed(args.seed)
