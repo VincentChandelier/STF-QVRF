@@ -376,7 +376,7 @@ def main(argv):
             for k, v in metrics.items():
                 results[k].append(v)
         else:
-            for factor in [0.5, 0.7, 0.9, 1.1, 1.25, 1.45, 1.7, 2.0, 2.4, 2.8, 3.3, 3.8, 4.0,
+            for factor in [1.1, 1.25, 1.45, 1.7, 2.0, 2.4, 2.8, 3.3, 3.8, 4.0,
             4.6, 5.4, 5.8, 6.5, 6.8, 7.5, 7.9, 8.3, 9.1, 9.4, 9.7, 10.5, 11, 12]:
                 metrics = eval_model(model, filepaths, args.entropy_estimation, args.half,
                                      args.output_path + '_factor_' + str(factor),

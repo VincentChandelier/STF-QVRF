@@ -549,6 +549,10 @@ class SymmetricalTransFormer(CompressionModel):
         self.gaussian_conditional = GaussianConditional(None)
         self._freeze_stages()
 
+        # self.lmbda = [0.0018, 0.0035, 0.0067, 0.0130, 0.025, 0.0483, 0.0932, 0.18, 0.36, 0.72, 1.44]
+        # self.Gain = torch.nn.Parameter(torch.tensor(
+        #     [1.0000,  1.3944,  1.9293,  2.6874,  3.7268,  5.1801,  7.1957, 10.0000, 14.1421, 20.0000, 28.2843]), requires_grad=True)  # initial with torch.tensor([torch.sqrt(i/self.lmbda[0]) for i in self.lmbda])
+
         self.lmbda = [0.0018, 0.0035, 0.0067, 0.0130, 0.025, 0.0483, 0.0932, 0.18]
         self.Gain = torch.nn.Parameter(torch.tensor(
             [1.0000,  1.3944,  1.9293,  2.6874,  3.7268,  5.1801,  7.1957, 10.0000]), requires_grad=True)  # initial with torch.tensor([torch.sqrt(i/self.lmbda[0]) for i in self.lmbda])
@@ -644,15 +648,13 @@ class SymmetricalTransFormer(CompressionModel):
                                                                   scale * QuantizationRegulator,
                                                                   mu * QuantizationRegulator)
 
-                y_likelihood.append(y_slice_likelihood)
                 y_hat_slice = self.gaussian_conditional.quantize(y_slice * QuantizationRegulator,
                                                            "noise" if self.training else "dequantize") * ReQuantizationRegulator
             else:
                 _, y_slice_likelihood = self.gaussian_conditional(y_slice*QuantizationRegulator, scale*QuantizationRegulator, mu*QuantizationRegulator)
-
-                y_likelihood.append(y_slice_likelihood)
                 y_hat_slice = ste_round((y_slice - mu)*QuantizationRegulator)*ReQuantizationRegulator + mu
 
+            y_likelihood.append(y_slice_likelihood)
             lrp_support = torch.cat([mean_support, y_hat_slice], dim=1)
             lrp = self.lrp_transforms[slice_index](lrp_support)
             lrp = 0.5 * torch.tanh(lrp)
