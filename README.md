@@ -18,7 +18,7 @@ This repo defines Transformer-based models in varibale rate model for learned im
 | Method | Lambda | Link                                                                                              |
 | ---- |--------|---------------------------------------------------------------------------------------------------|
 | Fixed-rate model | 0.0483 | [stf_0483](https://drive.google.com/file/d/1cH5cR-0VdsQqCchyN3DO62Sx0WGjv1h8/view?usp=share_link)    |
-| Variable-rate mode|0.0018, 0.0035, 0.0067, 0.0130, 0.025, 0.0483, 0.0932, 0.18  |  [stf_VR]()  |
+| Variable-rate mode|0.0018, 0.0035, 0.0067, 0.0130, 0.025, 0.0483, 0.0932, 0.18  |  [STFVR](https://drive.google.com/file/d/1OQZ-HfEcX3H-kOiIPdHpPO7ADf6FKKDV/view?usp=sharing)  |
 
 ## Installation
 ```bash
@@ -47,6 +47,8 @@ python3 train.py  -d ./dataset  -e 66 -lr 1e-5 -n 8 --batch-size 16 --test-batch
 python3 update.py checkpoint_best_loss.pth.tar  -n STFVRImageNetSTE
 ```
 ### Inference
+The checkpoint of STF+QVRF is avaibal [STFVR](https://drive.google.com/file/d/1OQZ-HfEcX3H-kOiIPdHpPO7ADf6FKKDV/view?usp=sharing).
+
 For  discrete bitrate results at a assign Index: Index belongs in {0, 1, 2, 3, 4, 5, 6, 7, 8}
 ```
 python3 Inference.py --dataset ./dataset/Kodak --s 11 --output_path STFVRSTE -p ./STFVRImageNetSTE.pth.tar --patch 64 --factormode 0 --factor 0 --cuda
@@ -60,7 +62,7 @@ python3 Inference.py --dataset ./dataset/Kodak --s 22 --output_path STFVRSTE -p 
 # RD results on Kodak
 The fixed-rate results are obtained by the provided fixed-rate models from [STF](https://github.com/Googolxx/STF).
 
-![](asserts/STF.png)
+![](assert/STF.png)
 
 
 ## Citation
