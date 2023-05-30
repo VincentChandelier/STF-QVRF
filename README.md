@@ -62,7 +62,7 @@ python3 Inference.py --dataset ./dataset/Kodak --s 22 --output_path STFVRSTE -p 
 # RD results on Kodak
 The fixed-rate results are obtained by the provided fixed-rate models from [STF](https://github.com/Googolxx/STF).
 
-![](assert/STF.png)
+![](assert/Kodak.png)
 
 
 ## Citation
