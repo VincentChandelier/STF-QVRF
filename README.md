@@ -31,7 +31,7 @@ pip install timm
 
 ## Usage
 
-### Training
+### Training (MSE as distortion)
 Load the [fixed-rate model](https://drive.google.com/file/d/1cH5cR-0VdsQqCchyN3DO62Sx0WGjv1h8/view?usp=share_link) from [STF](https://github.com/Googolxx/STF) as the pretrained model and finetune into a variable-rate model.
 
 The training and test dataset are same to [STF](https://github.com/Googolxx/STF)
@@ -60,20 +60,13 @@ python3 Inference.py --dataset ./dataset/Kodak --s 22 --output_path STFVRSTE -p 
 ```
 
 # RD results on Kodak
-The fixed-rate results are obtained by the provided fixed-rate models from [STF](https://github.com/Googolxx/STF).
+The fixed-rate results are obtained by the provided MSE-optimized fixed-rate models from [STF](https://github.com/Googolxx/STF).
 
 ![](assert/Kodak.png)
 
 
 ## Citation
-```
-@inproceedings{zou2022the,
-  title={The Devil Is in the Details: Window-based Attention for Image Compression},
-  author={Zou, Renjie and Song, Chunfeng and Zhang, Zhaoxiang},
-  booktitle={CVPR},
-  year={2022}
-}
-```
+If you think it is useful for your reseach, please cite the following paper. 
 ```
 @article{tong2023qvrf,
   title={QVRF: A Quantization-error-aware Variable Rate Framework for Learned Image Compression},
@@ -82,3 +75,12 @@ The fixed-rate results are obtained by the provided fixed-rate models from [STF]
   year={2023}
 }
 ```
+```
+@inproceedings{zou2022the,
+  title={The Devil Is in the Details: Window-based Attention for Image Compression},
+  author={Zou, Renjie and Song, Chunfeng and Zhang, Zhaoxiang},
+  booktitle={CVPR},
+  year={2022}
+}
+```
+
