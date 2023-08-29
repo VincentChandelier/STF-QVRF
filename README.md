@@ -24,7 +24,7 @@ This repo defines Transformer-based models in varibale rate model for learned im
 ```bash
 conda create -n compress python=3.7
 conda activate compress
-pip install compressai=1.1.5
+pip install compressai==1.1.5
 pip install pybind11
 pip install timm
 ```
