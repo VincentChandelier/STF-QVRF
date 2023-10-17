@@ -68,12 +68,16 @@ The fixed-rate results are obtained by the provided MSE-optimized fixed-rate mod
 ## Citation
 If you think it is useful for your reseach, please cite the following paper. 
 ```
-@article{tong2023qvrf,
-  title={QVRF: A Quantization-error-aware Variable Rate Framework for Learned Image Compression},
+@INPROCEEDINGS{10222717,
   author={Tong, Kedeng and Wu, Yaojun and Li, Yue and Zhang, Kai and Zhang, Li and Jin, Xin},
-  journal={arXiv preprint arXiv:2303.05744},
-  year={2023}
-}
+  booktitle={2023 IEEE International Conference on Image Processing (ICIP)}, 
+  title={QVRF: A Quantization-Error-Aware Variable Rate Framework for Learned Image Compression}, 
+  year={2023},
+  volume={},
+  number={},
+  pages={1310-1314},
+  doi={10.1109/ICIP49359.2023.10222717}}
+```
 ```
 ```
 @inproceedings{zou2022the,
